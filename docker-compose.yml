@@ -1,0 +1,50 @@
+services:
+  apache:
+    container_name: app_apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "./docker.php.settings.ini:/usr/local/etc/php/conf.d/docker.php.settings.ini"
+      - "./:/var/www/html"
+      - "/var/www/html/var"
+    ports:
+      - 80:80
+    environment:
+      - xdebug_remote_host=host.docker.internal
+      - DOCKER_DEBUG=1
+      - DOCKER_CACHE=1
+      - SYMFONY_ENV=dev
+      - SYMFONY_DEBUG=1
+
+  elasticsearch:
+    container_name: app_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  es-init:
+    container_name: app_es_init
+    image: alpine/curl:latest
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ./docker/elasticsearch:/data
+    entrypoint: ["sh", "/data/init.sh"]
+
+volumes:
+  es_data:
