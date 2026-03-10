@@ -69,7 +69,11 @@ class ElasticSearchService
                 [
                     'json' => [
                         'query' => [
-                            'match' => ['city' => 'Bordeaux']
+                            'bool' => [
+                                'filter' => [
+                                    'term' => ['localities.city.keyword' => 'Bordeaux']
+                                ]
+                            ]
                         ]
                     ]
                 ]
@@ -82,7 +86,9 @@ class ElasticSearchService
 
             return $data['count'] ?? 0;
         } catch (GuzzleException $e) {
-            return 0;
+            throw new \RuntimeException(
+                'ElasticSearch error: ' . $e->getMessage()
+            );
         }
     }
 
@@ -91,11 +97,16 @@ class ElasticSearchService
         return array_map(function ($hit) {
             $source = $hit['_source'];
 
+            $contractType = $source['contract_type'] ?? '';
+            if (is_array($contractType)) {
+                $contractType = implode(', ', $contractType);
+            }
+
             return new Job(
                 $source['title']                    ?? 'Sans titre',
                 $source['description']              ?? 'Non spécifiéé',
                 $source['localities'][0]['city']    ?? 'Non spécifié',
-                $source['contract_type']            ?? 'Non spécifié',
+                $contractType                       ?: 'Non spécifié',
                 $source['company']                  ?? 'Non spécifiée'
             );
         }, $hits);

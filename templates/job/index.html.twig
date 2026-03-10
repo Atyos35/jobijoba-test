@@ -7,12 +7,12 @@
 
         <div class="text-center text-white mb-5">
             <h1 class="display-4 fw-bold">Offres d'emploi à Bordeaux</h1>
-            <p class="lead">{{ totalCount }} offres disponibles</p>
+            <p class="lead">{{ pagination.totalItems }} offres disponibles</p>
         </div>
 
         <div class="text-center mb-4">
             <span class="badge bg-light text-dark">
-                Page {{ currentPage }} / {{ totalPages }}
+                Page {{ pagination.currentPage }} / {{ pagination.totalPages }}
             </span>
         </div>
 
@@ -56,37 +56,37 @@
                 {% endfor %}
             </div>
 
-            {% if totalPages > 1 %}
+            {% if pagination.totalPages > 1 %}
                 <nav aria-label="Pagination">
                     <ul class="pagination justify-content-center flex-wrap">
 
-                        {% if currentPage > 1 %}
+                        {% if pagination.currentPage > 1 %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ path('app_home') }}">← Première</a>
+                                <a class="page-link" href="{{ path('app_bordeaux_job') }}">← Première</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="{{ path('app_jobs_page', {page: currentPage - 1}) }}">← Précédente</a>
+                                <a class="page-link" href="{{ path('app_bordeaux_job_page', {page: pagination.currentPage - 1}) }}">← Précédente</a>
                             </li>
                         {% endif %}
 
-                        {% for p in 1..totalPages %}
-                            {% if p == currentPage %}
+                        {% for p in 1..pagination.totalPages %}
+                            {% if p == pagination.currentPage %}
                                 <li class="page-item active">
                                     <span class="page-link">{{ p }}</span>
                                 </li>
-                            {% elseif p >= currentPage - 2 and p <= currentPage + 2 %}
+                            {% elseif p >= pagination.currentPage - 2 and p <= pagination.currentPage + 2 %}
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ path('app_jobs_page', {page: p}) }}">{{ p }}</a>
+                                    <a class="page-link" href="{{ path('app_bordeaux_job_page', {page: p}) }}">{{ p }}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
 
-                        {% if currentPage < totalPages %}
+                        {% if pagination.currentPage < pagination.totalPages %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ path('app_jobs_page', {page: currentPage + 1}) }}">Suivante →</a>
+                                <a class="page-link" href="{{ path('app_bordeaux_job_page', {page: pagination.currentPage + 1}) }}">Suivante →</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="{{ path('app_jobs_page', {page: totalPages}) }}">Dernière →</a>
+                                <a class="page-link" href="{{ path('app_bordeaux_job_page', {page: pagination.totalPages}) }}">Dernière →</a>
                             </li>
                         {% endif %}
 
