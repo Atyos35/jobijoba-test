@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Offres d'emploi - Jobijoba{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+
+        <div class="text-center text-white mb-5">
+            <h1 class="display-4 fw-bold">Offres d'emploi à Bordeaux</h1>
+            <p class="lead">{{ totalCount }} offres disponibles</p>
+        </div>
+
+        <div class="text-center mb-4">
+            <span class="badge bg-light text-dark">
+                Page {{ currentPage }} / {{ totalPages }}
+            </span>
+        </div>
+
+        {% if jobs %}
+            <div class="row g-4 mb-5">
+                {% for job in jobs %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 shadow-sm card-hover">
+
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-1">{{ job.title }}</h5>
+                                <small class="text-light">{{ job.company }}</small>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="card-text text-muted line-clamp">
+                                    {{ job.description|slice(0, 150) }}
+                                    {% if job.description|length > 150 %}...{% endif %}
+                                </p>
+
+                                <div class="d-flex flex-column gap-2 small">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-info me-2">📍</span>
+                                        <span>{{ job.location }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-info me-2">📋</span>
+                                        <span class="badge
+                                            {% if 'CDI' in job.contractType %}bg-success
+                                            {% elseif 'CDD' in job.contractType %}bg-warning
+                                            {% else %}bg-secondary
+                                            {% endif %}">
+                                            {{ job.contractType }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if totalPages > 1 %}
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center flex-wrap">
+
+                        {% if currentPage > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('app_home') }}">← Première</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('app_jobs_page', {page: currentPage - 1}) }}">← Précédente</a>
+                            </li>
+                        {% endif %}
+
+                        {% for p in 1..totalPages %}
+                            {% if p == currentPage %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ p }}</span>
+                                </li>
+                            {% elseif p >= currentPage - 2 and p <= currentPage + 2 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('app_jobs_page', {page: p}) }}">{{ p }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if currentPage < totalPages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('app_jobs_page', {page: currentPage + 1}) }}">Suivante →</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('app_jobs_page', {page: totalPages}) }}">Dernière →</a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            {% endif %}
+
+        {% else %}
+            <div class="alert alert-warning text-center" role="alert">
+                <h4>Aucune offre disponible.</h4>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}

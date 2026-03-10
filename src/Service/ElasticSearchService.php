@@ -37,8 +37,7 @@ class ElasticSearchService
                 ]
             ],
             'from' => $from,
-            'size' => $perPage,
-            'sort' => ['date' => ['order' => 'desc']]
+            'size' => $perPage
         ];
 
         try {

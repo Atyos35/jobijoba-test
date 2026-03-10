@@ -9,7 +9,6 @@
         "ext-iconv": "*",
         "easycorp/easyadmin-bundle": "^4.6",
         "guzzlehttp/guzzle": "^7.10",
-        "predis/predis": "^3.4",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
         "symfony/flex": "^2",
