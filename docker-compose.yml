@@ -36,6 +36,19 @@ services:
       timeout: 5s
       retries: 10
 
+  redis: 
+    container_name: app_redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   es-init:
     container_name: app_es_init
     image: alpine/curl:latest
@@ -48,3 +61,4 @@ services:
 
 volumes:
   es_data:
+  redis_data:
