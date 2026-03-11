@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\ElasticSearchService;
+use App\Service\CacheService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,7 +12,7 @@ use App\Service\PaginationService;
 class JobController extends AbstractController
 {
     public function __construct(
-        private ElasticSearchService $elasticSearchService,
+        private CacheService $cacheService,
         private PaginationService $paginationService
     ) {}
 
@@ -28,7 +28,7 @@ class JobController extends AbstractController
     {
 
         try {
-            $totalCount = $this->elasticSearchService->getTotalCount();
+            $totalCount = $this->cacheService->getTotalCount();
         } catch (\RuntimeException $e) {
             return new Response(
                 'Erreur de connexion à ElasticSearch: ' . $e->getMessage(),
@@ -43,7 +43,7 @@ class JobController extends AbstractController
         }
 
         try {
-            $jobs = $this->elasticSearchService->getJobsFromBordeaux($page, $pagination['perPage']);
+            $jobs = $this->cacheService->getJobsFromBordeaux($page, $pagination['perPage']);
         } catch (\RuntimeException $e) {
             return new Response(
                 'Erreur de connexion à ElasticSearch: ' . $e->getMessage(),

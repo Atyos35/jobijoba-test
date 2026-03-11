@@ -18,6 +18,9 @@ services:
       - DOCKER_CACHE=1
       - SYMFONY_ENV=dev
       - SYMFONY_DEBUG=1
+    depends_on:
+      redis:
+        condition: service_started
 
   elasticsearch:
     container_name: app_elasticsearch
@@ -45,6 +48,14 @@ services:
     volumes:
       - ./docker/elasticsearch:/data
     entrypoint: ["sh", "/data/init.sh"]
+
+  redis:
+    container_name: app_redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
 volumes:
   es_data:
